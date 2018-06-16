@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Home Page</title>
+</head>
+
+<body align="center">
+    <h1>Home Page</h1>
+    </br>
+    </br>
+    <h3>Login</h3>
+    <div>
+        <form action="/vote" method="post" onsubmit="return conf();">
+            <select style="width: 300px">
+                    <option>Select Your Vote</option>
+                    <option value="mercedes">Mercedes</option>
+                    <option value="audi">Audi</option>
+                    <option value="bmw">BMW</option>
+            </select>
+        </br>
+            <input type="submit" value="VOTE">
+        </form>
+    </div>
+    <script>
+        function conf() {
+            return confirm("Are you sure?");
+        }
+    </script>
+
+</body>
+
+</html>
