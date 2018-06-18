@@ -1,8 +1,7 @@
 import mongoose=require("mongoose");
 import uniqueValidator=require("mongoose-unique-validator");
 import bcrypt=require("bcrypt");
-
-const maxVotes=1;
+import config=require("./config");
 
 const UserSchema=new mongoose.Schema({
     embg:{
@@ -34,7 +33,7 @@ UserSchema.plugin(uniqueValidator);
 VoteSchema.plugin(uniqueValidator);
 
 UserSchema.methods.validVote=function(voteCount){
-    return voteCount<maxVotes;
+    return voteCount<config.maxVotes;
 };
 UserSchema.methods.validPassword = function(password){
     return bcrypt.compareSync(password,this.passwordHash);
