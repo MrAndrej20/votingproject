@@ -2,35 +2,28 @@
 <html>
 
 <head>
-    <title>Vote</title>
+    <title>Home Page</title>
 </head>
 
 <body align="center">
-    <h1>Time To Vote</h1>
+    <h1>Home Page</h1>
     </br>
     </br>
-    <h3>Choose Your Subject</h3>
+    <h3>Login</h3>
     <div>
-        <form name="vote" action="/vote" method="post" onsubmit="return conf();">
-            <select style="width: 300px" name="option">
-                <option>Select Your Vote</option>
-                <option value="mercedes">Mercedes</option>
-                <option value="audi">Audi</option>
-                <option value="bmw">BMW</option>
+        <form action="/vote" method="post" onsubmit="return conf();">
+            <select style="width: 300px">
+                    <option>Select Your Vote</option>
+                    <option value="mercedes">Mercedes</option>
+                    <option value="audi">Audi</option>
+                    <option value="bmw">BMW</option>
             </select>
-            </br>
-            </br>
-            </br>
-            <input type="submit" value="VOTE" style="font-size: 1000px;">
+        </br>
+            <input type="submit" value="VOTE">
         </form>
     </div>
     <script>
         function conf() {
-            var x = document.forms["vote"]["option"].value;
-            if (x === "Select Your Vote") {
-                alert("Must choose a subject");
-                return false;
-            }
             return confirm("Are you sure?");
         }
     </script>
