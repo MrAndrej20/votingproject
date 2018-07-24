@@ -1,5 +1,7 @@
 import Schemas = require("../schema");
 import jwt = require("jsonwebtoken");
+// import { Entropy } from "entropy-string";
+
 export ={
     verifyToken: (req, res, next) => {
         if (!req.headers.cookie) {
@@ -23,7 +25,7 @@ export ={
                 }
             }
             else {
-                jwt.verify(thetoken, "tajna", (err, data) => {
+                jwt.verify(thetoken, "6q74m4G6frHL6RTd", (err, data) => {// should use entropy-string
                     if (err) {
                         if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") next();
                         else {
@@ -80,7 +82,7 @@ export ={
                         embg: req.body.embg,
                         id: user.id
                     },
-                        "tajna"
+                        "6q74m4G6frHL6RTd"// should use entropy-string
                     );
                     res.cookie("Bearer", token);
                     res.redirect("/vote");

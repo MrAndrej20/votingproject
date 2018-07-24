@@ -15,7 +15,7 @@ router.post("/login", action.verifyToken, action.login);
 router.post("/vote", action.verifyToken, action.vote);
 router.all("*", (req, res) => {
     console.log("************************************************************");
-    console.log("Rerouted from",req.url, "to /");
+    console.log("Rerouted from", req.url, "to /");
     console.log("Client IP:", _.findLast(req.connection.remoteAddress.split(":")));
     console.log("************************************************************");
     res.redirect("/");
