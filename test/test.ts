@@ -55,6 +55,25 @@
 
 // vote("123", "bmw");
 
+import nf = require("node-forge");
 
-if (null) console.log(1);
-else console.log(2);
+const key = nf.random.getBytesSync(16);
+
+var iv = "&Y,')6rOcnQ?IHBMU[QTM\-rF][tLk{";
+const message = "Hello World";
+
+const cipher = nf.cipher.createCipher("AES-CBC", key);
+cipher.start({ iv });
+cipher.update(nf.util.createBuffer(new Buffer(message)));
+cipher.finish();
+var encrypted = cipher.output.data;
+console.log(message);
+console.log("-", encrypted);
+encrypted = nf.util.createBuffer(new Buffer(cipher.output.data));
+
+
+const decipher = nf.cipher.createDecipher("AES-CBC", key);
+decipher.start({ iv });
+decipher.update(encrypted);
+decipher.finish();
+console.log("-", decipher.output.data);
