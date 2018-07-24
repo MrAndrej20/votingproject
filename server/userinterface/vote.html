@@ -9,25 +9,26 @@
     <h1>Home Page</h1>
     </br>
     </br>
-    <h3>Login</h3>
+    <h3>Choose Who To Vote For</h3>
     <div>
-        <form action="/vote" method="post" onsubmit="return conf();">
-            <select style="width: 300px">
-                    <option>Select Your Vote</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="audi">Audi</option>
-                    <option value="bmw">BMW</option>
+        <form action="/vote" method="post">
+            <select name="brand" style="width: 300px">
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+                <option value="bmw">BMW</option>
             </select>
         </br>
+    </br>
             <input type="submit" value="VOTE">
         </form>
     </div>
-    <script>
-        function conf() {
-            return confirm("Are you sure?");
-        }
-    </script>
-
+</br>
+    <h3>Logout</h3>
+        <div class="logout-form">
+            <form action='/logout' method='get'>
+                <input type='submit' value='Logout'>
+            </form>
+        </div>
 </body>
 
 </html>

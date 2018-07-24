@@ -4,7 +4,10 @@ export ={
     verifyToken: (req, res, next) => {
         if (!req.headers.cookie) {
             if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") next();
-            else res.status(403).redirect("/");
+            else {
+                console.log("No cookies, redirecting to /");
+                res.status(403).redirect("/");
+            }
         }
         else {
             const mycookie = req.headers.cookie.split(";");
@@ -14,17 +17,25 @@ export ={
             });
             if (!thetoken) {
                 if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") next();
-                else res.status(403).redirect("/");
+                else {
+                    console.log("No token, redirecting to /");
+                    res.status(403).redirect("/");
+                }
             }
             else {
                 jwt.verify(thetoken, "tajna", (err, data) => {
                     if (err) {
                         if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") next();
-                        else res.status(403).redirect("/");
+                        else {
+                            console.log("Token invalid, redirecting to /");
+                            res.status(403).redirect("/");
+                        }
                     }
                     else {
-                        if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register")
+                        if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") {
+                            console.log("Token valid, redirecting to /vote");
                             res.status(200).redirect("/vote");
+                        }
                         else {
                             res.locals.data = data;
                             res.locals.token = thetoken;
@@ -36,15 +47,25 @@ export ={
         }
     },
     register: (req, res) => {
-        if (!req.body.embg) res.status(400).send("EMBG required");
-        else if (!req.body.password) res.status(400).send("Password required");
+        if (!req.body.embg) {
+            console.log("EMBG missing");
+            res.status(400).send("EMBG required");
+        }
+        else if (!req.body.password) {
+            console.log("Password missing");
+            res.status(400).send("Password required");
+        }
         else {
             Schemas.User.findOne({ embg: req.body.embg })
                 .then(user => {
-                    if (user != null) res.status(400).send("EMBG taken");
+                    if (user != null) {
+                        console.log("EMBG taken");
+                        res.status(400).send("EMBG taken");
+                    }
                     else {
                         Schemas.User.create({ embg: req.body.embg, password: req.body.password, voteCount: 0 })
                             .then(x => {
+                                console.log("User registered, redirecting to /login with data");
                                 res.redirect(307, "/login");
                             })
                     }
@@ -64,38 +85,53 @@ export ={
                     res.cookie("Bearer", token);
                     res.redirect("/vote");
                 }
-                else res.status(400).send("Username or Password is incorrect");
-            });
-    },
-    vote: (req, res) => {
-        if (req.body.option === "mercedes" || "bmw" || "audi") {
-            Schemas.User.findOne({ embg: res.locals.data.embg }).then((user: any) => {
-                if (user === null) res.status(400).send("User not found");
                 else {
-                    if (user.validVote(user.voteCount))
-                        saveToDB(req.body.option).then((x) => {
-                            Schemas.User.update({embg:res.locals.data.embg},{voteCount:(user.voteCount+1)}).then(()=>{
-                                res.clearCookie("Bearer");
-                                res.status(200).send(x);
-
-                            });
-                        });
-                    else res.status(400).send("NO VOTES REMAINING");
+                    console.log("Username or Password is incorrect");
+                    res.status(400).send("Username or Password is incorrect");
                 }
             });
+    },
+    vote: async (req, res) => {
+        console.log(req.body);
+        if (req.body.brand === "mercedes" || "bmw" || "audi") {
+            const user = await findInDB("User", res.locals.data.embg).then(x => { return x });
+            if (user) {
+                if (user.validVote(user.voteCount)) {
+                    const subject = await findInDB("Vote", req.body.brand).then(x => { return x; });
+                    console.log(subject);
+                    const saved = await updateDB("Vote", req.body.brand, { subjectCount: (Number(subject.subjectCount) + 1) });
+                    console.log(saved);
+                    const updated = await updateDB("User", user.embg, { voteCount: (Number(user.voteCount) + 1) });
+                    console.log("Vote saved");
+                    res.status(200).send("Vote Saved");
+                }
+                else {
+                    console.log("No votes remaining");
+                    res.status(400).send("No votes remaining");
+                }
+            }
+            else {
+                console.log("User not found");
+                res.status(400).send("User not found");
+            }
         }
         else {
-            res.clearCookie("Bearer");
+            console.log("Error on voting");
             res.status(400).send("ERROR ON VOTING");
         }
 
+    },
+    logout: (req, res) => {
+        res.clearCookie('Bearer');
+        res.redirect('/');
     }
 };
-function saveToDB(subject) {
-    return Schemas.Vote.findOne({ subjectName: subject }).then((vote: any) => {
-        Schemas.Vote.update({ subjectName: subject }, { subjectCount: (Number(vote.subjectCount) + 1) }).then((err) => {
-            if (err) return "Vote Not Saved";
-            else return "Vote Saved";
-        });
-    });
+
+function findInDB(table, what) {
+    if (table === "Vote") return Schemas[table].findOne({ subjectName: what })
+    if (table === "User") return Schemas[table].findOne({ embg: what })
+}
+function updateDB(table, who, change) {
+    if (table === "Vote") return Schemas[table].update({ subjectName: who }, change).then(x => { return x; });
+    if (table === "User") return Schemas[table].update({ embg: who }, change).then(x => { return x; });
 }

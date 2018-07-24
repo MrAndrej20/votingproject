@@ -1,3 +1,5 @@
 server/dst
 package-lock.json
 **/.DS_Store
+node_modules
+server/test

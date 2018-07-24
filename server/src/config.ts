@@ -1,5 +1,5 @@
 
 
-export={
-    maxVotes:1
+export ={
+    maxVotes: 1
 }
