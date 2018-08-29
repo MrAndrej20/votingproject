@@ -1,7 +1,7 @@
 import Schemas = require("../schema");
 import jwt = require("jsonwebtoken");
 // import { Entropy } from "entropy-string";
-
+// push to db every 10 votes
 export ={
     verifyToken: (req, res, next) => {
         if (!req.headers.cookie) {
