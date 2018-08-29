@@ -5,79 +5,71 @@ import jwt = require("jsonwebtoken");
 export ={
     verifyToken: (req, res, next) => {
         if (!req.headers.cookie) {
-            if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") next();
-            else {
-                console.log("No cookies, redirecting to /");
-                res.status(403).redirect("/");
-            }
+            if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") return next();
+            console.log("No cookies, redirecting to /");
+            return res.status(403).redirect("/");
+
         }
-        else {
-            const mycookie = req.headers.cookie.split(";");
-            var thetoken;
-            mycookie.forEach(cookie => {
-                if (cookie.indexOf("Bearer") != -1) thetoken = cookie.split("=")[1];
-            });
-            if (!thetoken) {
-                if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") next();
-                else {
-                    console.log("No token, redirecting to /");
-                    res.status(403).redirect("/");
-                }
-            }
-            else {
-                jwt.verify(thetoken, "6q74m4G6frHL6RTd", (err, data) => {// should use entropy-string
-                    if (err) {
-                        if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") next();
-                        else {
-                            console.log("Token invalid, redirecting to /");
-                            res.status(403).redirect("/");
-                        }
-                    }
-                    else {
-                        if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") {
-                            console.log("Token valid, redirecting to /vote");
-                            res.status(200).redirect("/vote");
-                        }
-                        else {
-                            res.locals.data = data;
-                            res.locals.token = thetoken;
-                            next();
-                        }
-                    }
-                });
-            }
+        const mycookie = req.headers.cookie.split(";");
+        var thetoken;
+        mycookie.forEach(cookie => {
+            if (cookie.indexOf("Bearer") != -1) thetoken = cookie.split("=")[1];
+        });
+        if (!thetoken) {
+            if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") return next();
+            console.log("No token, redirecting to /");
+            return res.status(403).redirect("/");
         }
+        jwt.verify(thetoken, "6q74m4G6frHL6RTd", (err, data) => {// should use entropy-string
+            if (err) {
+                if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") return next();
+                console.log("Token invalid, redirecting to /");
+                return res.status(403).redirect("/");
+            }
+            if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") {
+                console.log("Token valid, redirecting to /vote");
+                return res.status(200).redirect("/vote");
+            }
+            res.locals.data = data;
+            res.locals.token = thetoken;
+            return next();
+
+        });
+
     },
     register: (req, res) => {
+        console.log("###", req.body);
         if (!req.body.embg) {
             console.log("EMBG missing");
-            res.status(400).send("EMBG required");
+            return res.status(400).send("EMBG required");
         }
-        else if (!req.body.password) {
+        if (!req.body.password) {
             console.log("Password missing");
-            res.status(400).send("Password required");
+            return res.status(400).send("Password required");
         }
-        else {
-            Schemas.User.findOne({ embg: req.body.embg })
-                .then(user => {
-                    if (user != null) {
-                        console.log("EMBG taken");
-                        res.status(400).send("EMBG taken");
-                    }
-                    else {
-                        Schemas.User.create({ embg: req.body.embg, password: req.body.password, voteCount: 0 })
-                            .then(x => {
-                                console.log("User registered, redirecting to /login with data");
-                                res.redirect(307, "/login");
-                            })
-                    }
-                })
-        }
+        Schemas.User.findOne({ embg: req.body.embg })
+            .then(user => {
+                if (user != null) {
+                    console.log("EMBG taken");
+                    res.status(400).send("EMBG taken");
+                }
+                else {
+                    Schemas.User.create({ embg: req.body.embg, password: req.body.password, voteCount: 0, region: "test" })
+                        .then(x => {
+                            console.log("User registered, redirecting to /login with data");
+                            res.redirect(307, "/login");
+                        })
+                }
+            })
     },
     login: (req, res) => {
         Schemas.User.findOne({ embg: req.body.embg })
             .then((user: any) => {
-                if (user !== null && user.validPassword(req.body.password)) {
+                if (!(user !== null && user.validPassword(req.body.password))) {
+                    console.log("Username or Password is incorrect");
+                    res.status(400).send("Username or Password is incorrect");
+                }
+                else {
                     var token = jwt.sign({
                         embg: req.body.embg,
                         id: user.id
@@ -87,18 +79,26 @@ export ={
                     res.cookie("Bearer", token);
                     res.redirect("/vote");
                 }
-                else {
-                    console.log("Username or Password is incorrect");
-                    res.status(400).send("Username or Password is incorrect");
-                }
             });
     },
     vote: async (req, res) => {
         console.log(req.body);
-        if (req.body.brand === "mercedes" || "bmw" || "audi") {
+        if (!(req.body.brand === "mercedes" || "bmw" || "audi")) {
+            console.log("Error on voting");
+            res.status(400).send("ERROR ON VOTING");
+        }
+        else {
             const user = await findInDB("User", res.locals.data.embg).then(x => { return x });
-            if (user) {
-                if (user.validVote(user.voteCount)) {
+            if (!user) {
+                console.log("User not found");
+                res.status(400).send("User not found");
+            }
+            else {
+                if (!user.validVote(user.voteCount)) {
+                    console.log("No votes remaining");
+                    res.status(400).send("No votes remaining");
+                }
+                else {
                     const subject = await findInDB("Vote", req.body.brand).then(x => { return x; });
                     console.log(subject);
                     const saved = await updateDB("Vote", req.body.brand, { subjectCount: (Number(subject.subjectCount) + 1) });
@@ -107,21 +107,8 @@ export ={
                     console.log("Vote saved");
                     res.status(200).send("Vote Saved");
                 }
-                else {
-                    console.log("No votes remaining");
-                    res.status(400).send("No votes remaining");
-                }
-            }
-            else {
-                console.log("User not found");
-                res.status(400).send("User not found");
             }
         }
-        else {
-            console.log("Error on voting");
-            res.status(400).send("ERROR ON VOTING");
-        }
-
     },
     logout: (req, res) => {
         res.clearCookie('Bearer');

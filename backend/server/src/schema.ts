@@ -1,7 +1,7 @@
 import mongoose = require("mongoose");
 import uniqueValidator = require("mongoose-unique-validator");
 import bcrypt = require("bcrypt");
-import config = require("./config");
+import config = require("../../../config");
 
 const UserSchema = new mongoose.Schema({
     embg: {
@@ -16,6 +16,10 @@ const UserSchema = new mongoose.Schema({
     voteCount: {
         type: Number,
         required: true
+    },
+    region: {
+        type: String,
+        required: true
     }
 });
 const VoteSchema = new mongoose.Schema({
@@ -24,9 +28,13 @@ const VoteSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
-    subjectCount: {
+    voteCount: {
         type: Number,
         required: true
+    },
+    subjectAttributes: {
+        type: Object,
+        required: false
     }
 });
 UserSchema.plugin(uniqueValidator);
