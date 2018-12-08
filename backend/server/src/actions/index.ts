@@ -1,126 +1,123 @@
 import Schemas = require("../schema");
 import jwt = require("jsonwebtoken");
-// import { Entropy } from "entropy-string";
+import _ = require("lodash");
+import config = require("../config");
 
-export ={
-    verifyToken: (req, res, next) => {
-        if (!req.headers.cookie) {
-            if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") return next();
-            console.log("No cookies, redirecting to /");
-            return res.status(403).redirect("/");
-
-        }
-        const mycookie = req.headers.cookie.split(";");
-        var thetoken;
-        mycookie.forEach(cookie => {
-            if (cookie.indexOf("Bearer") != -1) thetoken = cookie.split("=")[1];
-        });
-        if (!thetoken) {
-            if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") return next();
-            console.log("No token, redirecting to /");
-            return res.status(403).redirect("/");
-        }
-        jwt.verify(thetoken, "6q74m4G6frHL6RTd", (err, data) => {// should use entropy-string
-            if (err) {
-                if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") return next();
-                console.log("Token invalid, redirecting to /");
-                return res.status(403).redirect("/");
-            }
-            if (req.route.path === "/" || req.route.path === "/login" || req.route.path === "/register") {
-                console.log("Token valid, redirecting to /vote");
-                return res.status(200).redirect("/vote");
-            }
-            res.locals.data = data;
-            res.locals.token = thetoken;
-            return next();
-
-        });
-
-    },
-    register: (req, res) => {
-        console.log("###", req.body);
-        if (!req.body.embg) {
-            console.log("EMBG missing");
-            return res.status(400).send("EMBG required");
-        }
-        if (!req.body.password) {
-            console.log("Password missing");
-            return res.status(400).send("Password required");
-        }
-        Schemas.User.findOne({ embg: req.body.embg })
-            .then(user => {
-                if (user != null) {
-                    console.log("EMBG taken");
-                    res.status(400).send("EMBG taken");
-                }
-                else {
-                    Schemas.User.create({ embg: req.body.embg, password: req.body.password, voteCount: 0, region: "test" })
-                        .then(x => {
-                            console.log("User registered, redirecting to /login with data");
-                            res.redirect(307, "/login");
-                        })
-                }
-            })
-    },
-    login: (req, res) => {
-        Schemas.User.findOne({ embg: req.body.embg })
-            .then((user: any) => {
-                if (!(user !== null && user.validPassword(req.body.password))) {
-                    console.log("Username or Password is incorrect");
-                    res.status(400).send("Username or Password is incorrect");
-                }
-                else {
-                    var token = jwt.sign({
-                        embg: req.body.embg,
-                        id: user.id
-                    },
-                        "6q74m4G6frHL6RTd"// should use entropy-string
-                    );
-                    res.cookie("Bearer", token);
-                    res.redirect("/vote");
-                }
-            });
-    },
-    vote: async (req, res) => {
-        console.log(req.body);
-        if (!(req.body.brand === "mercedes" || "bmw" || "audi")) {
-            console.log("Error on voting");
-            res.status(400).send("ERROR ON VOTING");
-        }
-        else {
-            const user = await findInDB("User", res.locals.data.embg).then(x => { return x });
-            if (!user) {
-                console.log("User not found");
-                res.status(400).send("User not found");
-            }
-            else {
-                if (!user.validVote(user.voteCount)) {
-                    console.log("No votes remaining");
-                    res.status(400).send("No votes remaining");
-                }
-                else {
-                    const subject = await findInDB("Vote", req.body.brand).then(x => { return x; });
-                    console.log(subject);
-                    const saved = await updateDB("Vote", req.body.brand, { subjectCount: (Number(subject.subjectCount) + 1) });
-                    console.log(saved);
-                    const updated = await updateDB("User", user.embg, { voteCount: (Number(user.voteCount) + 1) });
-                    console.log("Vote saved");
-                    res.status(200).send("Vote Saved");
-                }
-            }
-        }
-    },
-    logout: (req, res) => {
-        res.clearCookie('Bearer');
-        res.redirect('/');
-    }
-};
+function isStart(path) {
+    return (path === "/" || path === "/login" || path === "/register");
+}
 
 function findInDB(table, what) {
     if (table === "Vote") return Schemas[table].findOne({ subjectName: what })
     if (table === "User") return Schemas[table].findOne({ embg: what })
 }
-function updateDB(table, who, change) {
-    if (table === "Vote") return Schemas[table].update({ subjectName: who }, change).then(x => { return x; });
-    if (table === "User") return Schemas[table].update({ embg: who }, change).then(x => { return x; });
+
+async function updateDB(table, who, change) {
+    if (table === "Vote") return Schemas[table].update({ subjectName: who }, change);
+    if (table === "User") return Schemas[table].update({ embg: who }, change);
+}
+
+function getToken(cookies: string[]): string {
+    const token = _.find(cookies, cookie => {
+        return cookie.includes("Bearer");
+    });
+    return token ? _.last(token.split("=")) : token;
+}
+
+export function bodyHas(...parameterNames: string[]) {
+    return (req, res, next) => {
+        const missingParameter = _.filter(parameterNames, parameterName => !_.get(req.body, parameterName));
+        if (missingParameter.length) {
+            return res.status(400).send(`Missing POST parameter: ${missingParameter}`);
+        }
+        else {
+            return next();
+        }
+    };
+}
+
+export function verifyToken(req, res, next) {
+    if (!req.headers.cookie) {
+        if (isStart(req.route.path)) return next();
+        console.log("No cookies, redirecting to /");
+        return res.status(403).redirect("/");
+    }
+    const cookies = req.headers.cookie.split(";");
+    const token = getToken(cookies);
+    if (!token) {
+        if (isStart(req.route.path)) return next();
+        console.log("No token, redirecting to /");
+        return res.status(403).redirect("/");
+    }
+    return jwt.verify(token, config.JWTsecret, (err, data) => {
+        if (err) {
+            if (isStart(req.route.path)) return next();
+            console.log("Token invalid, redirecting to /");
+            return res.status(403).redirect("/");
+        }
+        if (isStart(req.route.path)) {
+            console.log("Token valid, redirecting to /vote");
+            return res.status(200).redirect("/vote");
+        }
+        res.locals = { data, token };
+        return next();
+    });
+
+}
+export async function register(req, res) {
+    const user = await Schemas.User.findOne({ embg: req.body.embg });
+    if (user) {
+        console.log("EMBG taken");
+        res.status(400).send("EMBG taken");
+    }
+    else {
+        await Schemas.User.create({ embg: req.body.embg, password: req.body.password, voteCount: 0, region: "test" })
+        console.log("User registered, redirecting to /login with data");
+        res.status(201).send("/login");
+    }
+}
+export async function login(req, res) {
+    const user: any = await Schemas.User.findOne({ embg: req.body.embg });
+    if (!(user && user.validPassword(req.body.password))) {
+        console.log("Username or Password are incorrect");
+        res.status(400).send("Username or Password are incorrect");
+    }
+    else {
+        var token = jwt.sign({
+            embg: req.body.embg,
+            id: user.id
+        },
+            config.JWTsecret
+        );
+        res.cookie(`user=${user}`);// send username
+        res.status(200).send("Login Successful");
+    }
+}
+export async function vote(req, res) {
+    if (!(req.body.brand === "mercedes" || "bmw" || "audi")) {
+        console.log("Error on voting");
+        res.status(400).send("ERROR ON VOTING");
+    }
+    else {
+        const user = await findInDB("User", res.locals.data.embg);
+        if (!user) {
+            console.log("User not found");
+            res.status(400).send("User not found");
+        }
+        else {
+            if (!user.validVote(user.voteCount)) {
+                console.log("No votes remaining");
+                res.status(400).send("No votes remaining");
+            }
+            else {
+                const subject = await findInDB("Vote", req.body.brand);
+                console.log(subject);
+                const saved = await updateDB("Vote", req.body.brand, { subjectCount: (Number(subject.subjectCount) + 1) });
+                console.log(saved);
+                const updated = await updateDB("User", user.embg, { voteCount: (Number(user.voteCount) + 1) });
+                console.log("Vote saved");
+                res.status(200).send("Vote Saved");
+            }
+        }
+    }
 }

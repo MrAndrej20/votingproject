@@ -1,23 +1,49 @@
 import express = require("express");
-import action = require("../actions/index");
+import { verifyToken, login, register, vote, bodyHas } from "../actions/index";
 import path = require("path");
 import _ = require("lodash");
+import { format } from "util";
+
 const router = express.Router();
-router.get("/", action.verifyToken, (req, res) => {
-    res.sendFile(path.join(__dirname + "/../../userinterface/index.html"));
-});
-router.get("/vote", action.verifyToken, (req, res) => {
-    res.sendFile(path.join(__dirname + "/../../userinterface/vote.html"));
-});
-router.get("/logout", action.verifyToken, action.logout);
-router.post("/register", action.verifyToken, action.register);
-router.post("/login", action.verifyToken, action.login);
-router.post("/vote", action.verifyToken, action.vote);
-router.all("*", (req, res) => {
+
+router.post("/admin/session",
+    bodyHas("username", "password"),
+    verifyToken,
+    login
+);
+
+router.post("/login",
+    bodyHas("embg", "password"),
+    verifyToken,
+    login
+);
+
+router.get("/polls",
+    verifyToken,
+    //function to list all polls
+    // json object with all polls in format
+    //     { "poll1":[],
+    //       "poll2":[]
+    //      }
+);
+
+router.post("/register",
+    bodyHas("embg", "password"),// needs username aswell for frontend
+    verifyToken,
+    register
+);
+
+router.post("/vote",
+    bodyHas("brand"),
+    verifyToken,
+    vote
+);
+
+router.all("*", (req, res, next) => {
     console.log("************************************************************");
-    console.log("Rerouted from", req.url, "to /");
-    console.log("Client IP:", _.findLast(req.connection.remoteAddress.split(":")));
-    console.log("************************************************************");
-    res.redirect("/");
-})
-export =router;
+    console.log("Redirectng from", req.url, "to /");
+    console.log("Client IP:", _.last(req.connection.remoteAddress.split(":")));
+    return next()
+}, verifyToken);
+
+export = router;

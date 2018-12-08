@@ -1,7 +1,7 @@
 import mongoose = require("mongoose");
 import uniqueValidator = require("mongoose-unique-validator");
 import bcrypt = require("bcrypt");
-import config = require("../../../config");
+import config = require("./config");
 
 const UserSchema = new mongoose.Schema({
     embg: {
@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    region: {
+    userName: {
         type: String,
         required: true
     }
@@ -31,10 +31,6 @@ const VoteSchema = new mongoose.Schema({
     voteCount: {
         type: Number,
         required: true
-    },
-    subjectAttributes: {
-        type: Object,
-        required: false
     }
 });
 UserSchema.plugin(uniqueValidator);
@@ -54,7 +50,7 @@ UserSchema.virtual("password").set(function (value) {
 
 const User = mongoose.model("users", UserSchema),
     Vote = mongoose.model("votes", VoteSchema);
-export ={
+export = {
     User,
     Vote
 }
