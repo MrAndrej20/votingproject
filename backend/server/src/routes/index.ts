@@ -1,49 +1,34 @@
 import express = require("express");
-import { verifyToken, login, register, vote, bodyHas } from "../actions/index";
-import path = require("path");
-import _ = require("lodash");
-import { format } from "util";
+import { verifyToken, adminLogin, login, register, vote, bodyHas, polls } from "../actions/index";
 
 const router = express.Router();
 
 router.post("/admin/session",
     bodyHas("username", "password"),
-    verifyToken,
-    login
+    adminLogin
 );
 
 router.post("/login",
-    bodyHas("embg", "password"),
     verifyToken,
+    bodyHas("embg", "password"),
     login
 );
 
 router.get("/polls",
     verifyToken,
-    //function to list all polls
-    // json object with all polls in format
-    //     { "poll1":[],
-    //       "poll2":[]
-    //      }
+    polls
 );
 
 router.post("/register",
-    bodyHas("embg", "password"),// needs username aswell for frontend
     verifyToken,
+    bodyHas("embg", "password", "username"),// needs username aswell for frontend
     register
 );
 
 router.post("/vote",
-    bodyHas("brand"),
     verifyToken,
+    bodyHas("pollName", "subjectName"),
     vote
 );
-
-router.all("*", (req, res, next) => {
-    console.log("************************************************************");
-    console.log("Redirectng from", req.url, "to /");
-    console.log("Client IP:", _.last(req.connection.remoteAddress.split(":")));
-    return next()
-}, verifyToken);
 
 export = router;
