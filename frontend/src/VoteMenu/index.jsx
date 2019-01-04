@@ -43,6 +43,9 @@ export default class VoteMenu extends React.Component {
 
     render() {
         const {user, polls, activePoll} = this.state;
+        console.log(user);
+        console.log(polls);
+        console.log(activePoll);
         return <VoteMenuContainer>
             {!user && <Redirect to='/' />}
             <h2>Welcome {user}</h2>

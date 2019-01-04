@@ -1,6 +1,6 @@
 import React from "react";
-import {Option, PollContainer, VoteButtonWrapper} from "../LoginPage/styles";
-import {constructRequest, getUser} from "../common/helper";
+import { Option, PollContainer, VoteButtonWrapper } from "../LoginPage/styles";
+import { getUser, constructRequest } from "../common/helper";
 
 export default class Poll extends React.Component {
     constructor(props) {
@@ -12,36 +12,36 @@ export default class Poll extends React.Component {
     }
 
     changeOption = (event) => {
-        this.setState({chosenOption: event.target.value});
+        this.setState({ chosenOption: event.target.value });
     };
 
     makeVote = () => {
-        const {chosenOption} = this.state;
+        const { chosenOption } = this.state;
 
         if (!chosenOption) {
             this.setState({
                 message: 'Please select an option'
             })
         } else {
-            this.setState({message: null});
-            const {name} = this.props;
-            fetch(`http://localhost:3000/vote`, constructRequest("POST", {username: getUser(), poll: name, option: chosenOption}))
+            this.setState({ message: null });
+            const { name } = this.props;
+            fetch(`http://localhost:3000/vote`, constructRequest("POST", `username=yoktur&pollName=${name}&subjectName=${chosenOption}`))
                 .then(res => res.json())
-                .then(res => this.setState({message: res.message}))
+                .then(res => this.setState({ message: res.message }))
                 .catch(msg => console.log(msg))
         }
     };
 
     close = () => {
-        this.setState({message: null})
+        this.setState({ message: null })
     };
 
     render() {
-        const {name, options} = this.props;
-        const {message} = this.state;
+        const { name, options } = this.props;
+        const { message } = this.state;
         return <PollContainer>
             <h2>{name}</h2>
-            {options.map((option, idx) => <Option key={idx}><input type="radio" name={name} value={option} onClick={this.changeOption} />{option}</Option>)}<br/>
+            {options.map((option, idx) => <Option key={idx}><input type="radio" name={name} value={option} onClick={this.changeOption} />{option}</Option>)}<br />
             {message && <div onClick={this.close}>{message}</div>}
             <VoteButtonWrapper><button onClick={this.makeVote}>Vote</button></VoteButtonWrapper>
         </PollContainer>
