@@ -65,7 +65,8 @@ export async function register(req, res) {
     //     await User.insert(user).all();
     //     return res.status(201).send({ username: user.username });
     // }
-    return res.status(400).send({ message: "EMBG Already Taken" });
+    // return res.status(400).send({ message: "EMBG Already Taken" });
+    return res.status(200).send({ message: 'Done' });
 }
 
 export async function polls(req, res) {
