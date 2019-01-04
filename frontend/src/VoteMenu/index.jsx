@@ -1,5 +1,5 @@
 import React from "react";
-import {constructRequest, getUser, MOCK} from "../common/helper";
+import {constructRequest, getCookie, MOCK} from "../common/helper";
 import {VoteMenuContainer} from "../LoginPage/styles";
 import {Redirect} from "react-router-dom";
 import Poll from "../Poll";
@@ -7,11 +7,11 @@ import Poll from "../Poll";
 export default class VoteMenu extends React.Component {
     constructor(props) {
         super(props);
-        const user = getUser();
+        const user = getCookie('user');
         this.state = {
             user,
             polls: MOCK,
-            activePoll: 0
+            activePoll: 0,
         }
     }
 
@@ -19,7 +19,7 @@ export default class VoteMenu extends React.Component {
         fetch("http://localhost:3000/polls", constructRequest("GET"))
             .then(res => res.json())
             .then(res => {
-                let polls = [{name: '-', options: []}];
+                const polls = [{name: '-', options: []}];
 
                 for (let poll in res) {
                     if (res.hasOwnProperty(poll)) {
@@ -28,7 +28,7 @@ export default class VoteMenu extends React.Component {
                 }
 
                 this.setState({polls})
-            }) // replace mock
+            })
             .catch(msg => console.log(msg));
     }
 
@@ -43,17 +43,15 @@ export default class VoteMenu extends React.Component {
 
     render() {
         const {user, polls, activePoll} = this.state;
-        console.log(user);
-        console.log(polls);
-        console.log(activePoll);
         return <VoteMenuContainer>
-            {!user && <Redirect to='/' />}
+            {!user && <Redirect to='/'/>}
             <h2>Welcome {user}</h2>
             <select onChange={this.setActivePoll}>
                 {polls.map((poll, idx) => <option key={idx} value={idx}>{poll.name}</option>)}
             </select><br/><br/>
-            {activePoll > 0 && <Poll name={polls[activePoll].name} options={polls[activePoll].options} />}<br/><br/>
+            {activePoll > 0 && <Poll name={polls[activePoll].name} options={polls[activePoll].options}/>}<br/><br/>
             <button onClick={this.logOut}>Log out</button>
         </VoteMenuContainer>
     }
+
 }

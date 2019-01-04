@@ -1,11 +1,11 @@
-export const getUser = () => {
+export const getCookie = (key) => {
     const cookies = decodeURIComponent(document.cookie).split('; ');
-    const user = cookies.find(cookie => {
-        const parts = cookie.split('=');
-        return parts[0] === 'user' && parts[1] !== '';
+    const cookie = cookies.find(ck => {
+        const parts = ck.split('=');
+        return parts[0] === key && parts[1] !== '';
     });
 
-    return user && user.split('=')[1];
+    return cookie && cookie.split('=')[1];
 };
 
 export const MOCK = [
@@ -28,8 +28,11 @@ export function constructRequest(method, body = null) {
     return {
         method,
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'x-auth-header': getCookie('jwt')
         },
+        credentials: 'include',
+        mode: 'cors',
         body
     }
 }

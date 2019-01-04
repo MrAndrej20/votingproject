@@ -37,7 +37,9 @@ export async function adminLogin(req, res) {
     const token = jwt.sign({
 
     }, config.JWTsecret);
-    res.setHeader("x-auth-header", token);
+    res.cookie("jwt", token,{expires: new Date(Date.now() + 9999999)});
+    // res.setHeader("Access-Control-Expose-Headers", "x-auth-header");
+    // res.setHeader("x-auth-header", token);
     return res.status(200).send({ message: 'Done' });
 }
 export async function login(req, res) {

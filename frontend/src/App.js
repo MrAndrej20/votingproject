@@ -9,8 +9,8 @@ class App extends Component {
     componentDidMount() {
         // document.cookie = "user=exe";
         // document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC"
+        // document.cookie = "jwt=; expires=Thu, 01, Jan 1970 00:00:00 UTC";
         fetch("http://localhost:3000/admin/session", constructRequest("POST", `username=root&password=root`))
-            .then()
             .catch(msg => console.log(msg))
     }
 

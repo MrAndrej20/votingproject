@@ -1,3 +1,5 @@
+process.env.adminUser = 'root';
+process.env.adminPass = 'root';
 import express = require("express");
 import bodyParser = require("body-parser");
 import path = require('path');
@@ -28,7 +30,9 @@ const app = express();
 app.disable('x-powered-by');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((_req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Origin", "http://localhost:4140");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "x-auth-header");
     return next();
 });
 app.use(routes);
