@@ -78,7 +78,23 @@ export async function polls(req, res) {
     //         )
     // );
     // return res.status(200).send(pollsWithSubjects);
-    return res.status(200).send({ message: "done" });
+    return res.status(200).send({
+        "Cars": [
+            "merc",
+            "bmw",
+            "audi",
+            "vw",
+            "opel"
+        ],
+        "Monitors": [
+            "benq",
+            "asus"
+        ],
+        "Mouses": [
+            "steelseries",
+            "razor"
+        ]
+    });
 }
 
 export async function vote(req, res) {
