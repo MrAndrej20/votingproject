@@ -1,17 +1,17 @@
 import express = require("express");
 import bodyParser = require("body-parser");
 import path = require('path');
-import migrations = require('anydb-sql-migrations');
+// import migrations = require('anydb-sql-migrations');
 import mongoose = require("mongoose");
 import routes = require("./routes/index");
 import config = require('./config');
-import * as db from './lib/base';
+// import * as db from './lib/base';
 const app = express();
 
-mongoose.connect(config.mongodbEndpoint, { useNewUrlParser: true }).catch(err => {
-    console.log("Error connecting to mongoose endpoint", config.mongodbEndpoint);
-    console.log(err);
-});
+// mongoose.connect(config.mongodbEndpoint, { useNewUrlParser: true }).catch(err => {
+//     console.log("Error connecting to mongoose endpoint", config.mongodbEndpoint);
+//     console.log(err);
+// });
 
 // Migrations
 // try {

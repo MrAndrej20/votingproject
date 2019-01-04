@@ -9,24 +9,24 @@ router.post("/admin/session",
 );
 
 router.post("/login",
-    verifyToken,
+    // verifyToken,
     bodyHas("embg", "password"),
     login
 );
 
 router.get("/polls",
-    verifyToken,
+    // verifyToken,
     polls
 );
 
 router.post("/register",
-    verifyToken,
+    // verifyToken,
     bodyHas("embg", "password", "username"),// needs username aswell for frontend
     register
 );
 
 router.post("/vote",
-    verifyToken,
+    // verifyToken,
     bodyHas("pollName", "subjectName"),
     vote
 );
