@@ -1,8 +1,8 @@
-import React from "react";
-import {constructRequest, getCookie, MOCK} from "../common/helper";
-import {VoteMenuContainer} from "../LoginPage/styles";
-import {Redirect} from "react-router-dom";
-import Poll from "../Poll";
+import React from 'react';
+import {constructRequest, getCookie, MOCK} from '../common/helper';
+import {VoteMenuContainer} from '../LoginPage/styles';
+import {Redirect} from 'react-router-dom';
+import Poll from '../Poll';
 
 export default class VoteMenu extends React.Component {
     constructor(props) {
@@ -16,7 +16,7 @@ export default class VoteMenu extends React.Component {
     }
 
     componentDidMount() {
-        fetch("http://localhost:3000/polls", constructRequest("GET"))
+        fetch('http://localhost:3000/polls', constructRequest('GET'))
             .then(res => res.json())
             .then(res => {
                 const polls = [{name: '-', options: []}];
@@ -37,7 +37,7 @@ export default class VoteMenu extends React.Component {
     };
 
     logOut = () => {
-        document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        document.cookie = 'user=; expires=Thu, 01 Jan 1970 00:00:01 GMT';
         this.setState({user: null})
     };
 

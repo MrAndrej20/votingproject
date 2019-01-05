@@ -1,5 +1,5 @@
-import anydbSQL = require("anydb-sql");
-import config = require("../config");
+import anydbSQL = require('anydb-sql');
+import config = require('../config');
 
 namespace db {
     export type Transaction = anydbSQL.Transaction;

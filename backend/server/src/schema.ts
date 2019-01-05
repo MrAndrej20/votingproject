@@ -1,4 +1,4 @@
-import mongoose = require("mongoose");
+import mongoose = require('mongoose');
 
 const PollSchema = new mongoose.Schema({
     pollName: {
@@ -21,5 +21,5 @@ export interface Poll {
     voteCount: number;
 }
 
-export const Poll = mongoose.model("Poll", PollSchema);
+export const Poll = mongoose.model('Poll', PollSchema);
 

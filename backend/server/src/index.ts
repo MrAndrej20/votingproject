@@ -1,27 +1,27 @@
 process.env.adminUser = 'root';
 process.env.adminPass = 'root';
-import express = require("express");
-import bodyParser = require("body-parser");
+import express = require('express');
+import bodyParser = require('body-parser');
 import path = require('path');
-// import migrations = require('anydb-sql-migrations');
-import mongoose = require("mongoose");
-import routes = require("./routes/index");
+import migrations = require('anydb-sql-migrations');
+import mongoose = require('mongoose');
+import routes = require('./routes/index');
 import config = require('./config');
-// import * as db from './lib/base';
+import * as db from './lib/base';
 const app = express();
 
-// mongoose.connect(config.mongodbEndpoint, { useNewUrlParser: true }).catch(err => {
-//     console.log("Error connecting to mongoose endpoint", config.mongodbEndpoint);
-//     console.log(err);
-// });
+mongoose.connect(config.mongodbEndpoint, { useNewUrlParser: true }).catch(err => {
+    console.log('Error connecting to mongoose endpoint', config.mongodbEndpoint);
+    console.log(err);
+});
 
 // Migrations
 // try {
 //     var migrationDir = path.resolve(__dirname, './migrations');
-//     console.log("Migrations with database", config.mysql.url);
+//     console.log('Migrations with database', config.mysql.url);
 //     migrations.create(db, migrationDir).run();
 // } catch (err) {
-//     console.log("Test");
+//     console.log('Test');
 //     console.log(err);
 // }
 // ============
@@ -30,11 +30,11 @@ const app = express();
 app.disable('x-powered-by');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((_req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://localhost:4140");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Headers", "x-auth-header");
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'x-auth-header');
     return next();
 });
 app.use(routes);
 
-app.listen(config.port, () => console.log("Server started!"));
+app.listen(config.port, () => console.log('Server started!'));

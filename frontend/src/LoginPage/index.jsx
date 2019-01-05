@@ -1,7 +1,7 @@
-import React from "react";
-import {FormInput, FormWrapper, Header, LoginPageContainer, ButtonWrapper, ErrorMessage} from "./styles";
-import {Redirect} from "react-router-dom";
-import {constructRequest, getCookie} from "../common/helper";
+import React from 'react';
+import {FormInput, FormWrapper, Header, LoginPageContainer, ButtonWrapper, ErrorMessage} from './styles';
+import {Redirect} from 'react-router-dom';
+import {constructRequest, getCookie} from '../common/helper';
 
 export default class LoginPage extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export default class LoginPage extends React.Component {
     onPasswordChange = event => this.setState({password: event.target.value});
     onEnter = () => {
         const {SSN, password} = this.state;
-        fetch(`http://localhost:3000/login`, constructRequest("POST", `embg=${SSN}&password=${password}`))
+        fetch(`http://localhost:3000/login`, constructRequest('POST', `embg=${SSN}&password=${password}`))
             .then(res => {
                 let {logged, clicked} = this.state;
 
@@ -46,7 +46,7 @@ export default class LoginPage extends React.Component {
                 <div>SSN:</div>
                 <FormInput value={SSN} onChange={this.onSSNChange}/>{newLine}
                 <div>Password:</div>
-                <FormInput type="password" value={password} onChange={this.onPasswordChange}/>{newLine}
+                <FormInput type='password' value={password} onChange={this.onPasswordChange}/>{newLine}
                 <ButtonWrapper>
                     <button onClick={this.onEnter}>Enter</button>
                 </ButtonWrapper>
