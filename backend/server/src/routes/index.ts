@@ -1,11 +1,17 @@
 import express = require('express');
-import { verifyToken, adminLogin, login, register, vote, bodyHas, polls, addPoll } from '../actions/index';
+import { verifyToken, adminLogin, login, register, vote, bodyHas, getPolls, addPoll } from '../actions/index';
 
 const router = express.Router();
 
 router.post('/admin/session',
     bodyHas('username', 'password'),
     adminLogin
+);
+
+router.post('/register',
+    verifyToken,
+    bodyHas('embg', 'password', 'username'),
+    register
 );
 
 router.post('/login',
@@ -16,13 +22,13 @@ router.post('/login',
 
 router.get('/polls',
     verifyToken,
-    polls
+    getPolls
 );
 
-router.post('/register',
+router.post('/poll',
     verifyToken,
-    bodyHas('embg', 'password', 'username'),
-    register
+    bodyHas('pollName', 'subjects'),
+    addPoll
 );
 
 router.post('/vote',
@@ -31,10 +37,5 @@ router.post('/vote',
     vote
 );
 
-router.post('/poll',
-    verifyToken,
-    bodyHas('pollName', 'subjects'),
-    addPoll
-);
 
 export = router;
