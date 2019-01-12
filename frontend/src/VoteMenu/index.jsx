@@ -16,7 +16,7 @@ export default class VoteMenu extends React.Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:3000/polls', constructRequest('GET'))
+        fetch('https://localhost:3000/polls', constructRequest('GET'))
             .then(res => res.json())
             .then(res => {
                 const polls = [{name: '-', options: []}];

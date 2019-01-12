@@ -1,0 +1,22 @@
+{
+    "name": "serve-server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node server/dst/index.js",
+        "prestart": "npm run build",
+        "test": "echo \"No test needed\"",
+        "build": "./node_modules/.bin/tsc --p ./server/src/"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@types/express": "^4.16.0",
+        "@types/node": "^10.12.18",
+        "express": "^4.16.4",
+        "fs": "0.0.1-security",
+        "https": "^1.0.0"
+    }
+}

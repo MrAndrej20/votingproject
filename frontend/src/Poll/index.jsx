@@ -37,7 +37,7 @@ export default class Poll extends React.Component {
         } else {
             this.setState({ message: null });
             const { name } = this.props;
-            fetch(`http://localhost:3000/vote`, constructRequest(
+            fetch(`https://localhost:3000/vote`, constructRequest(
                 'POST', `embg=${getCookie('user')}&pollName=${name}&subjectName=${chosenOption}`))
                 .then(res => {
                     if (res.status === 200) {

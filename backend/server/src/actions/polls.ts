@@ -16,12 +16,7 @@ export async function getPolls(req, res) {
 export async function addPoll(req, res) {
     const { pollName, subjects } = req.body;
     const subjectsNames = subjects.split(' ').join('').split(',');
-    const polls = _.map(subjectsNames, subjectName => {
-        return {
-            pollName,
-            subjectName
-        }
-    });
+    const polls = _.map(subjectsNames, subjectName => ({ pollName, subjectName }));
     const existingPoll = await Schemas.Poll.findOne({ pollName });
     if (existingPoll) {
         return res.status(400).send({ message: 'Poll already exists' });

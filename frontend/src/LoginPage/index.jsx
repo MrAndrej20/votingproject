@@ -19,7 +19,7 @@ export default class LoginPage extends React.Component {
     onPasswordChange = event => this.setState({password: event.target.value});
     onEnter = () => {
         const {SSN, password} = this.state;
-        fetch(`http://localhost:3000/login`, constructRequest('POST', `embg=${SSN}&password=${password}`))
+        fetch(`https://localhost:3000/login`, constructRequest('POST', `embg=${SSN}&password=${password}`))
             .then(res => {
                 let {logged, clicked} = this.state;
 
