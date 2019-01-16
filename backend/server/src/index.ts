@@ -14,8 +14,8 @@ import config = require('./config');
 const app = express();
 
 const options = {
-    key: fs.readFileSync('/Users/andrej-macbookair/Downloads/151109.key.pem'),
-    cert: fs.readFileSync('/Users/andrej-macbookair/Downloads/G7ca.cert.pem'),
+    key: fs.readFileSync('/Users/andrej-macbookair/Desktop/151109.key.pem'),
+    cert: fs.readFileSync('/Users/andrej-macbookair/Desktop/G7ca.cert.pem'),
     passphrase: "eximon107"
 };
 mongoose.connect(config.mongodbEndpoint, { useNewUrlParser: true }).catch(err => {
