@@ -16,7 +16,9 @@ export default class LoginPage extends React.Component {
     }
 
     onSSNChange = event => this.setState({SSN: event.target.value});
+
     onPasswordChange = event => this.setState({password: event.target.value});
+
     onEnter = () => {
         const {SSN, password} = this.state;
         fetch(`https://localhost:3000/login`, constructRequest('POST', `embg=${SSN}&password=${password}`))
@@ -25,7 +27,7 @@ export default class LoginPage extends React.Component {
 
                 if (res.status === 200) {
                     logged = true;
-                    document.cookie = `user=${SSN}`;
+                    document.cookie = `user=${SSN}`; // remove this and add redux
                 } else {
                     clicked = true;
                 }
@@ -33,6 +35,12 @@ export default class LoginPage extends React.Component {
                 this.setState({logged, clicked});
             })
             .catch(msg => console.log(msg));
+    };
+
+    onKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            this.onEnter();
+        }
     };
 
     render() {
@@ -44,12 +52,10 @@ export default class LoginPage extends React.Component {
             <FormWrapper>
                 <b>Enter your social security number and password</b>{newLine}
                 <div>SSN:</div>
-                <FormInput value={SSN} onChange={this.onSSNChange}/>{newLine}
+                <FormInput value={SSN} onKeyPress={this.onKeyPress} onChange={this.onSSNChange}/>{newLine}
                 <div>Password:</div>
-                <FormInput type='password' value={password} onChange={this.onPasswordChange}/>{newLine}
-                <ButtonWrapper>
-                    <button onClick={this.onEnter}>Enter</button>
-                </ButtonWrapper>
+                <FormInput type='password' value={password} onKeyPress={this.onKeyPress} onChange={this.onPasswordChange}/>{newLine}
+                <ButtonWrapper><button onClick={this.onEnter}>Enter</button></ButtonWrapper>
                 {clicked && !logged && <ErrorMessage>Wrong username or password</ErrorMessage>}
             </FormWrapper>
         </LoginPageContainer>
