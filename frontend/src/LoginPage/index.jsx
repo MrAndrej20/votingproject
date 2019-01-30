@@ -1,5 +1,5 @@
 import React from 'react';
-import {FormInput, FormWrapper, Header, LoginPageContainer, ButtonWrapper, ErrorMessage} from './styles';
+import {FormInput, FormWrapper, Header, LoginPageContainer, ButtonWrapper, ErrorMessage} from '../common/styles';
 import {Redirect} from 'react-router-dom';
 import {constructRequest, getCookie} from '../common/helper';
 

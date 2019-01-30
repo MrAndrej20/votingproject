@@ -1,6 +1,6 @@
 import React from 'react';
-import {constructRequest, getCookie, MOCK} from '../common/helper';
-import {VoteMenuContainer} from '../LoginPage/styles';
+import {constructRequest, getCookie, getPolls, MOCK} from '../common/helper';
+import {VoteMenuContainer} from '../common/styles';
 import {Redirect} from 'react-router-dom';
 import Poll from '../Poll';
 
@@ -45,12 +45,11 @@ export default class VoteMenu extends React.Component {
         const {user, polls, activePoll} = this.state;
         return <VoteMenuContainer>
             {!user && <Redirect to='/'/>}
-            <h2>Welcome {user}</h2>
+            <h2>Currently logged in: {user} <button onClick={this.logOut}>Log out</button></h2>
             <select onChange={this.setActivePoll}>
                 {polls.map((poll, idx) => <option key={idx} value={idx}>{poll.name}</option>)}
             </select><br/><br/>
             {activePoll > 0 && <Poll name={polls[activePoll].name} options={polls[activePoll].options}/>}<br/><br/>
-            <button onClick={this.logOut}>Log out</button>
         </VoteMenuContainer>
     }
 

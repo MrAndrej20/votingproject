@@ -9,19 +9,19 @@ export const getCookie = (key) => {
 };
 
 export const MOCK = [
-    { name: '-', options: [] },
-    { name: 'poll1', options: ['op1', 'op2'] },
-    { name: 'poll2', options: ['op1', 'op2'] },
-    { name: 'poll3', options: ['op1', 'op2', 'op3', 'op4'] },
-    { name: 'poll4', options: ['op1', 'op2', 'op3', 'op4', 'op5', 'op6', 'op7'] },
-    { name: 'poll5', options: ['op1', 'op2', 'op3', 'op4', 'op5', 'op6', 'op7'] },
-    { name: 'poll6', options: ['op1', 'op2', 'op3', 'op4', 'op5', 'op6', 'op7'] },
-    { name: 'poll7', options: ['op1', 'op2', 'op3', 'op4', 'op5', 'op6', 'op7'] },
-    { name: 'poll8', options: ['op1', 'op2', 'op3', 'op4', 'op5', 'op6', 'op7'] },
-    { name: 'poll9', options: ['op1', 'op2', 'op3', 'op4', 'op5', 'op6', 'op7'] },
-    { name: 'poll10', options: ['op1', 'op2', 'op3', 'op4', 'op5', 'op6', 'op7'] },
-    { name: 'poll11', options: ['op1', 'op2', 'op3', 'op4', 'op5', 'op6', 'op7'] },
-    { name: 'poll12', options: ['op1', 'op2', 'op3', 'op4', 'op5', 'op6', 'op7'] }
+    {name: '-', options: []},
+    {name: 'poll1', options: [{option: 'op1', voteCount: 3}, {option: 'op2', voteCount: 6}]},
+    {
+        name: 'poll2',
+        options: [{option: 'op1', voteCount: 4}, {option: 'op2', voteCount: 0}, {option: 'op3', voteCount: 3}]
+    },
+    {
+        name: 'poll3',
+        options: [{option: 'op1', voteCount: 2}, {option: 'op2', voteCount: 7}, {
+            option: 'op3',
+            voteCount: 4
+        }, {option: 'op4', voteCount: 1}]
+    },
 ];
 
 export function constructRequest(method, body = null) {
@@ -35,4 +35,24 @@ export function constructRequest(method, body = null) {
         mode: 'cors',
         body
     }
+}
+
+export function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+
+    return color;
+}
+
+export function generateColors(count) {
+    const colors = [];
+
+    for (let i = 0; i < count; i++) {
+        colors.push(getRandomColor());
+    }
+
+    return colors;
 }
