@@ -9,13 +9,14 @@ import * as fs from 'fs';
 import mongoose = require('mongoose');
 import routes = require('./routes/index');
 import config = require('./config');
+import * as path from "path";
 // import * as db from './lib/base';
 
 const app = express();
 
 const options = {
-    key: fs.readFileSync('/Users/andrej-macbookair/Desktop/151109.key.pem'),
-    cert: fs.readFileSync('/Users/andrej-macbookair/Desktop/G7ca.cert.pem'),
+    key: fs.readFileSync(path.join(__dirname, '../../../serve-server/certs/server.key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '../../../serve-server/certs/server.cert.pem')),
     passphrase: "eximon107"
 };
 mongoose.connect(config.mongodbEndpoint, { useNewUrlParser: true }).catch(err => {

@@ -9,7 +9,7 @@ export default class Poll extends React.Component {
             return {
                 name: nextProps.name,
                 chosenOption: null,
-                mesage: null
+                message: null
             };
         }
         return null;
