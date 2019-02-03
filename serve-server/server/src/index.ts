@@ -3,8 +3,8 @@ import express = require('express');
 import * as fs from 'fs';
 import * as path from 'path';
 const options = {
-    key: fs.readFileSync(path.join(__dirname, '../../certs/server.key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, '../../certs/server.cert.pem')),
+    key: fs.readFileSync(path.join(__dirname, '../../../certs/server.key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '../../../certs/server.cert.pem')),
     passphrase: "eximon107"
 };
 

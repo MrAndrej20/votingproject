@@ -18,25 +18,14 @@ export function bodyHas(...parameterNames: string[]) {
 }
 
 export function verifyToken(req, res, next) {
-    if (!req.headers['x-auth-header']) {
+    const authCookie = req.cookies ? req.cookies.jwt : undefined;
+    if (!authCookie) {
         return res.status(401).send({ message: 'Unauthorized' });
     }
     try {
-        jwt.verify(req.headers['x-auth-header'], config.JWTsecret);
+        jwt.verify(authCookie, config.JWTsecret);
     } catch (err) {
         return res.status(401).send({ message: 'Unauthorized' });
     }
     return next();
-}
-export async function adminLogin(req, res) {
-    const { username, password } = req.body;
-    const { adminUser, adminPass } = process.env;
-    if (username !== adminUser || password !== adminPass) {
-        return res.status(401).send({ message: 'Wrong Credentials' });
-    }
-    const token = jwt.sign({
-
-    }, config.JWTsecret);
-    res.cookie('jwt', token);
-    return res.status(200).send({ message: 'Admin successfully logged in' });
 }

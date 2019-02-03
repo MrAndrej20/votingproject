@@ -2,6 +2,7 @@ process.env.adminUser = 'root';
 process.env.adminPass = 'root';
 import express = require('express');
 import bodyParser = require('body-parser');
+import cookieParser = require('cookie-parser');
 import https = require('https');
 import * as fs from 'fs';
 // import path = require('path');
@@ -15,8 +16,8 @@ import * as path from "path";
 const app = express();
 
 const options = {
-    key: fs.readFileSync(path.join(__dirname, '../../../serve-server/certs/server.key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, '../../../serve-server/certs/server.cert.pem')),
+    key: fs.readFileSync(path.join(__dirname, '../../../certs/server.key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '../../../certs/server.cert.pem')),
     passphrase: "eximon107"
 };
 mongoose.connect(config.mongodbEndpoint, { useNewUrlParser: true }).catch(err => {
@@ -38,6 +39,7 @@ mongoose.connect(config.mongodbEndpoint, { useNewUrlParser: true }).catch(err =>
 
 app.disable('x-powered-by');
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use((_req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'https://localhost:3443');
     res.header('Access-Control-Allow-Credentials', 'true');

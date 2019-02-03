@@ -1,12 +1,7 @@
 import express = require('express');
-import { verifyToken, adminLogin, login, register, vote, bodyHas, getPolls, addPoll } from '../actions/index';
+import { verifyToken, login, register, vote, bodyHas, getPolls, addPoll } from '../actions/index';
 
 const router = express.Router();
-
-router.post('/admin/session',
-    bodyHas('username', 'password'),
-    adminLogin
-);
 
 router.post('/register',
     verifyToken,
@@ -15,7 +10,6 @@ router.post('/register',
 );
 
 router.post('/login',
-    verifyToken,
     bodyHas('embg', 'password'),
     login
 );
