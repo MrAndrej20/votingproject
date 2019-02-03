@@ -39,6 +39,7 @@ export const VoteMenuContainer = styled.div`
     min-height: 100vh;
     text-align: center;
     overflow: hidden;
+    position: relative;
 `;
 
 export const PollContainer = styled.div`
@@ -62,4 +63,10 @@ export const VoteButtonWrapper = styled.div`
 
 export const VoteMessage = styled.div`
     background-color: ${props => props.backgroundColor};
+`;
+
+export const ChartContainer = styled.div`
+    width: 50%;
+    position: absolute;
+    left: 28%;    
 `;
