@@ -1,7 +1,7 @@
 import React from 'react';
-import {constructRequest, getCookie, MOCK} from '../common/helper';
-import {VoteMenuContainer} from '../common/styles';
-import {Redirect} from 'react-router-dom';
+import { constructRequest, getCookie, MOCK } from '../common/helper';
+import { VoteMenuContainer } from '../common/styles';
+import { Redirect } from 'react-router-dom';
 import Poll from '../Poll';
 
 export default class VoteMenu extends React.Component {
@@ -18,56 +18,56 @@ export default class VoteMenu extends React.Component {
 
     componentDidMount() {
         fetch('https://localhost:3000/polls', constructRequest('GET'))
-            .then(res => res.json())
-            .then(res => {
-                const polls = [{name: '-', options: []}]
-                const isAdmin = res['type'] === 'admin'
+        .then(res => res.json())
+        .then(res => {
+            const polls = [{ name: '-', options: [] }]
+            const isAdmin = res['type'] === 'admin'
+            const resPolls = res['poll'];
+            for (let poll in resPolls) {
+                if (resPolls.hasOwnProperty(poll)) {
+                    const options = [];
 
-                for (let poll in res) {
-                    if (res.hasOwnProperty(poll)) {
-                        const options = [];
-
-                        if (isAdmin) {
-                            for (let option in res[poll]) {
-                                if (res[poll].hasOwnProperty(option)) {
-                                    options.push({option, voteCount: res[poll][option]})
-                                }
+                    if (isAdmin) {
+                        for (let option in resPolls[poll]) {
+                            if (resPolls[poll].hasOwnProperty(option)) {
+                                options.push({ option, voteCount: resPolls[poll][option] })
                             }
-                        } else {
-                            res[poll].forEach(option => options.push({option}))
                         }
-
-                        polls.push({name: poll, options})
+                    } else {
+                        resPolls[poll].forEach(option => options.push({ option }))
                     }
-                }
 
-                this.setState({isAdmin, polls})
-            })
-            .catch(msg => console.log(msg));
+                    polls.push({ name: poll, options })
+                }
+            }
+
+            this.setState({ isAdmin, polls })
+        })
+        .catch(msg => console.log(msg));
     }
 
     setActivePoll = (event) => {
-        this.setState({activePoll: event.target.value})
+        this.setState({ activePoll: event.target.value })
     };
 
     logOut = () => {
         document.cookie = 'user=; expires=Thu, 01 Jan 1970 00:00:01 GMT'
         document.cookie = 'jwt=; expired=Thu, 01 Jan 1970 00:00:01 GMT'
-        this.setState({user: null})
+        this.setState({ user: null })
     };
 
     render() {
-        const {user, polls, isAdmin, activePoll} = this.state;
+        const { user, polls, isAdmin, activePoll } = this.state;
         return <VoteMenuContainer>
-            {!user && <Redirect to='/'/>}
+            {!user && <Redirect to='/' />}
             <h2>Currently logged in: {user}
                 <button onClick={this.logOut}>Log out</button>
             </h2>
             <select onChange={this.setActivePoll}>
                 {polls.map((poll, idx) => <option key={idx} value={idx}>{poll.name}</option>)}
-            </select><br/><br/>
+            </select><br /><br />
             {activePoll > 0 &&
-            <Poll isAdmin={isAdmin} name={polls[activePoll].name} options={polls[activePoll].options}/>}<br/><br/>
+                <Poll isAdmin={isAdmin} name={polls[activePoll].name} options={polls[activePoll].options} />}<br /><br />
         </VoteMenuContainer>
     }
 }

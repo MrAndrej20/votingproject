@@ -57,7 +57,7 @@ export async function vote(req, res) {
     const authCookie = req.cookies.jwt;
     const jwtData = jwt.decode(authCookie);
     try {
-        const user: User = await User.select(User.pollVotes).where(User.embg.equals(jwtData["embg"])).get();
+        const user = await User.select(User.pollVotes).where(User.embg.equals(jwtData["embg"])).get();
         if (!user) {
             return res.status(400).send({ message: 'User does not exist' });
         }
@@ -72,7 +72,7 @@ export async function vote(req, res) {
             .updateOne({ subjectName, pollName }, pollSubject);
         await User
             .update({ pollVotes: JSON.stringify(user.pollVotes) })
-            .where(User.embg.equals(user.embg))
+            .where(User.embg.equals(jwtData["embg"]))
             .exec();
     } catch (err) {
         console.log(err);

@@ -41,7 +41,7 @@ app.disable('x-powered-by');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use((_req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://localhost:3443');
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Headers', 'x-auth-header');
     return next();

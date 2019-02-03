@@ -25,11 +25,9 @@ export async function login(req, res) {
     if (!bcrypt.compareSync(password, user.password)) {
         return res.status(400).send({ message: 'Wrong Password' });
     }
-
     const token = jwt.sign({
-        username: user.username,
         type: "user",
-        embg: user.embg
+        embg
     }, config.JWTsecret, { expiresIn: 3600 });
     res.cookie('jwt', token);
     return res.status(200).send({ message: 'User successfully logged in' });
