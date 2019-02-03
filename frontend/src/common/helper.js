@@ -28,8 +28,7 @@ export function constructRequest(method, body = null) {
     return {
         method,
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'x-auth-header': getCookie('jwt')
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
         credentials: 'include',
         mode: 'cors',

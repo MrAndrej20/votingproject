@@ -27,7 +27,7 @@ export default class LoginPage extends React.Component {
 
                 if (res.status === 200) {
                     logged = true;
-                    document.cookie = `user=${SSN}`; // remove this and add redux
+                    document.cookie = `user=${SSN}`;
                 } else {
                     clicked = true;
                 }
@@ -56,7 +56,7 @@ export default class LoginPage extends React.Component {
                 <div>Password:</div>
                 <FormInput type='password' value={password} onKeyPress={this.onKeyPress} onChange={this.onPasswordChange}/>{newLine}
                 <ButtonWrapper><button onClick={this.onEnter}>Enter</button></ButtonWrapper>
-                {clicked && !logged && <ErrorMessage>Wrong username or password</ErrorMessage>}
+                {clicked && <ErrorMessage>Wrong username or password</ErrorMessage>}
             </FormWrapper>
         </LoginPageContainer>
     }

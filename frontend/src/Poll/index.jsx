@@ -1,6 +1,6 @@
 import React from 'react';
 import {Option, PollContainer, VoteButtonWrapper, VoteMessage} from '../common/styles';
-import {constructRequest, generateColors, getCookie} from '../common/helper';
+import {constructRequest, generateColors} from '../common/helper';
 import Results from '../Results';
 
 const INIT_STATE = {
@@ -11,20 +11,22 @@ const INIT_STATE = {
 
 export default class Poll extends React.Component {
     static getDerivedStateFromProps(nextProps, prevState) {
+        const {isAdmin, options} = nextProps
+
         return nextProps.name !== prevState.name ? {
             ...INIT_STATE,
-            name: nextProps.name,
-            colors: generateColors(nextProps.options.length)
-        } : null;
+            colors: isAdmin && generateColors(options.length)
+        } : null
     }
 
     constructor(props) {
         super(props);
-        this.state = {...INIT_STATE, name: this.props.name};
+        this.state = {...INIT_STATE}
     }
 
     componentDidMount() {
-        this.setState({colors: generateColors(this.props.options.length)})
+        const {isAdmin, options} = this.props;
+        this.setState({colors: isAdmin && generateColors(options.length)})
     }
 
     changeOption = (event) => {
@@ -32,22 +34,22 @@ export default class Poll extends React.Component {
     };
 
     makeVote = () => {
-        const {chosenOption} = this.state;
+        const {chosenOption} = this.state
 
         if (!chosenOption) {
             this.setState({
                 message: {text: 'Please select an option', color: 'lightCoral'}
             })
         } else {
-            this.setState({message: null});
-            const {name} = this.props;
+            this.close()
+            const {name} = this.props
             fetch(`https://localhost:3000/vote`, constructRequest(
-                'POST', `embg=${getCookie('user')}&pollName=${name}&subjectName=${chosenOption}`))
+                'POST', `pollName=${name}&subjectName=${chosenOption}`))
                 .then(res => {
                     if (res.status === 200) {
                         this.setState({message: {text: 'Vote successful', color: 'lightGreen'}})
                     } else {
-                        this.setState({message: {test: 'You have already voted in this poll', color: 'lightCoral'}})
+                        this.setState({message: {text: 'You have already voted in this poll', color: 'lightCoral'}})
                     }
                 })
                 .catch(msg => console.log(msg))
@@ -59,12 +61,12 @@ export default class Poll extends React.Component {
     };
 
     toggleResults = () => {
-        this.setState({showResults: !this.state.showResults});
+        this.setState({showResults: !this.state.showResults})
     }
 
     render() {
-        const {name, options} = this.props;
-        const {message, showResults, colors} = this.state;
+        const {name, options, isAdmin} = this.props
+        const {message, showResults} = this.state
 
         return <React.Fragment>
             <PollContainer>
@@ -79,8 +81,10 @@ export default class Poll extends React.Component {
                     <button onClick={this.makeVote}>Vote</button>
                 </VoteButtonWrapper>
             </PollContainer><br/>
-            <button onClick={this.toggleResults}>{showResults ? 'Hide' : 'Show'} results</button>
-            {showResults && <Results colors={colors} options={options}/>}
+            {isAdmin && <React.Fragment>
+                <button onClick={this.toggleResults}>{showResults ? 'Hide' : 'Show'} results</button>
+                {showResults && <Results colors={this.state.colors} options={options}/>}
+            </React.Fragment>}
         </React.Fragment>
     }
 }
