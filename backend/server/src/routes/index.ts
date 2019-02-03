@@ -4,7 +4,6 @@ import { verifyToken, login, register, vote, bodyHas, getPolls, addPoll } from '
 const router = express.Router();
 
 router.post('/register',
-    verifyToken,
     bodyHas('embg', 'password', 'username'),
     register
 );
@@ -27,7 +26,7 @@ router.post('/poll',
 
 router.post('/vote',
     verifyToken,
-    bodyHas('pollName', 'subjectName', 'embg'),
+    bodyHas('pollName', 'subjectName'),
     vote
 );
 

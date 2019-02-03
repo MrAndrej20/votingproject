@@ -18,7 +18,7 @@ export function bodyHas(...parameterNames: string[]) {
 }
 
 export function verifyToken(req, res, next) {
-    const authCookie = req.cookies ? req.cookies.jwt : undefined;
+    const authCookie = req.cookies ? req.cookies.jwt : req.cookies;
     if (!authCookie) {
         return res.status(401).send({ message: 'Unauthorized' });
     }

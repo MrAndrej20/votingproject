@@ -11,12 +11,11 @@ export async function getPolls(req, res) {
     const pollsWithSubjects: any = _.groupBy(all, b => b.pollName);
     if (jwtData["type"] === "admin") {
         _.forEach(_.keys(pollsWithSubjects), a => {
-
             pollsWithSubjects[a] = _.groupBy(pollsWithSubjects[a], d => d.subjectName);
             _.forEach(_.keys(pollsWithSubjects[a]), b => pollsWithSubjects[a][b] = _.first(pollsWithSubjects[a][b])["voteCount"]);
         }
         );
-        return res.status(200).send(pollsWithSubjects);
+        return res.status(200).send({ poll: pollsWithSubjects, type: "admin" });
     }
     if (jwtData["type"] === "user") {
         _.forEach(
@@ -24,7 +23,7 @@ export async function getPolls(req, res) {
                 pollsWithSubjects[c] = _.map(pollsWithSubjects[c], d => pollsWithSubjects[c] = d.subjectName
                 )
         );
-        return res.status(200).send(pollsWithSubjects);
+        return res.status(200).send({ poll: pollsWithSubjects, type: "user" });
     }
 }
 
