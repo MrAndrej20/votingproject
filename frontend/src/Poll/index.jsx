@@ -68,9 +68,8 @@ export default class Poll extends React.Component {
     render() {
         const { name, options, isAdmin } = this.props
         const { message, showResults } = this.state
-        console.log({ message });
         return <React.Fragment>
-            <PollContainer>
+            {!isAdmin && <PollContainer>
                 <h2>{name}</h2>
                 {options.map(({ option }, idx) => <Option key={`${name}${idx}`}><input type='radio' name={name}
                     value={option}
@@ -81,7 +80,7 @@ export default class Poll extends React.Component {
                 <VoteButtonWrapper>
                     <button onClick={this.makeVote}>Vote</button>
                 </VoteButtonWrapper>
-            </PollContainer><br />
+            </PollContainer>}<br />
             {isAdmin && <React.Fragment>
                 <button onClick={this.toggleResults}>{showResults ? 'Hide' : 'Show'} results</button>
                 {showResults && <Results colors={this.state.colors} options={options} />}

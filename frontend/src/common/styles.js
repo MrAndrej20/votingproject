@@ -36,9 +36,9 @@ export const ErrorMessage = styled.div`
 
 export const VoteMenuContainer = styled.div`
     background-color: #87CEEB;
-    min-height: 100vh;
+    min-height: 150vh;
     text-align: center;
-    overflow: hidden;
+    overflow: scroll;
     position: relative;
 `;
 
@@ -68,5 +68,5 @@ export const VoteMessage = styled.div`
 export const ChartContainer = styled.div`
     width: 50%;
     position: absolute;
-    left: 28%;    
+    left: 28%;
 `;
