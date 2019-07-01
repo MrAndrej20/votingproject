@@ -3,7 +3,6 @@ import _ = require('lodash');
 import config = require('../config');
 
 export { addPoll, getPolls, vote } from './polls';
-
 export { login, register } from './users';
 
 export function bodyHas(...parameterNames: string[]) {
