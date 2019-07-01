@@ -4,7 +4,6 @@ import config = require('../config');
 
 export { addPoll, getPolls, vote } from './polls';
 export { login, register } from './users';
-
 export function bodyHas(...parameterNames: string[]) {
     return (req, res, next) => {
         const missingParameter = _.filter(parameterNames, parameterName => !_.get(req.body, parameterName));
