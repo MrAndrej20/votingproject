@@ -28,7 +28,7 @@
         "any-db": "^2.2.1",
         "anydb-sql": "^0.7.0",
         "anydb-sql-migrations": "^2.3.1",
-        "bcrypt": "^3.0.3",
+        "bcrypt": "^5.0.0",
         "body-parser": "^1.18.3",
         "cookie-parser": "^1.4.3",
         "entropy-string": "^4.1.0",
